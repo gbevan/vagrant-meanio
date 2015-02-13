@@ -44,8 +44,8 @@ RUN apt-get update && \
     mkdir -p /etc/sudoers.d && \
     echo "vagrant ALL= NOPASSWD: ALL" > /etc/sudoers.d/vagrant && \
     chmod 0440 /etc/sudoers.d/vagrant && \
-    echo "set modeline" > /root/.vimrc && \
-    echo "export TERM=vt100" >> /root/.bashrc && \
+    echo "set modeline" > /etc/vim/vimrc.local && \
+    echo -e "export TERM=vt100\nexport LANG=C\nexport LC_ALL=C" > /etc/profile.d/dockenv.sh && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
     echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' > /etc/apt/sources.list.d/mongodb.list && \
     apt-get update && \
