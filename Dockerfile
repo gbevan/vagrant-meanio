@@ -42,7 +42,7 @@ RUN apt-get update && \
     echo -n 'vagrant:vagrant' | chpasswd && \
     touch /home/vagrant/.hushlogin && \
     mkdir -p /etc/sudoers.d && \
-    echo "vagrant ALL= NOPASSWD: ALL" > /etc/sudoers.d/vagrant && \
+    echo "vagrant ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/vagrant && \
     chmod 0440 /etc/sudoers.d/vagrant && \
     echo "set modeline" > /etc/vim/vimrc.local && \
     echo -e "export TERM=vt100\nexport LANG=C\nexport LC_ALL=C" > /etc/profile.d/dockenv.sh && \
@@ -58,11 +58,12 @@ RUN apt-get update && \
     npm install -g grunt-cli && \
     npm install -g bower && \
     npm install -g mean-cli && \
-    su - vagrant -c' echo -e "\n\n \n" | mean init appserver && cd appserver && npm install && mean install mean-admin' && \
+    npm cache clean; \
+    su - vagrant -c' echo -e "\n\n \n" | mean init appserver && cd appserver && npm install && mean install mean-admin && npm cache clean; bower cache clean' && \
     mongo mean-dev --eval "printjson(db.dropDatabase())" && \
     killall mongod; \
     rm -rf /var/lib/mongodb/*; \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 CMD ["/usr/sbin/sshd", "-D", "-e"]
 EXPOSE 22
