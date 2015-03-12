@@ -63,11 +63,10 @@ RUN apt-get update && \
     npm install -g bower && \
     npm install -g mean-cli && \
     npm cache clean; \
-    su - vagrant -c' echo -e "\n\n \n" | mean init --branch 0.4.2 appserver && cd appserver && npm install && mean install mean-admin && npm cache clean; bower cache clean' && \
+    su - vagrant -c'echo -e "\n\n \n" | mean init --branch v0.4.2 appserver && cd appserver && npm install && mean install mean-admin && npm cache clean; bower cache clean; grunt test' && \
     mongo mean-dev --eval "printjson(db.dropDatabase())" && \
-    killall mongod; \
-    rm -rf /var/lib/mongodb/*; \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    killall mongod && \
+    rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 CMD ["/usr/sbin/sshd", "-D", "-e"]
 EXPOSE 22
