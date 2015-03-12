@@ -32,7 +32,7 @@ ENV LC_ALL=C
 RUN apt-get update && \
     apt-get dist-upgrade -y && \
     apt-get install -y wget aptitude htop vim vim-puppet git traceroute dnsutils \
-      curl ssh sudo psmisc gcc make build-essential libfreetype6 libfontconfig && \
+      curl ssh sudo psmisc gcc make build-essential libfreetype6 libfontconfig augeas-tools && \
     mkdir /var/run/sshd && \
     sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config && \
     sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config && \
@@ -63,7 +63,13 @@ RUN apt-get update && \
     npm install -g bower && \
     npm install -g mean-cli && \
     npm cache clean; \
-    su - vagrant -c'echo -e "\n\n \n" | mean init --branch v0.4.2 appserver && cd appserver && npm install && mean install mean-admin && npm cache clean; bower cache clean; grunt test' && \
+    echo "Before mean init"; \
+    su - vagrant -c'echo -e "\n\n \n" | mean init --branch v0.4.2 appserver && cd appserver && npm install && mean install mean-admin && npm cache clean; bower cache clean' && \
+    echo "Before perl edit Gruntfile"; \
+    perl -e 'local $/=undef; open(GR,"</home/vagrant/appserver/Gruntfile.js"); binmode GR; $F=<GR>; $F=~s/(mochaTest: {.\s*options: {)/$1\n        timeout: 20000,/ms; open(NG, ">/home/vagrant/appserver/Gruntfile.js"); print NG $F' && \
+    echo "Before grunt test"; \
+    su - vagrant -c'cd appserver && grunt test' && \
+    echo "After grunt test"; \
     mongo mean-dev --eval "printjson(db.dropDatabase())" && \
     killall mongod && \
     rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
