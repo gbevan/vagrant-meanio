@@ -69,7 +69,7 @@ RUN apt-get update && \
     perl -e 'local $/=undef; open(GR,"</home/vagrant/appserver/Gruntfile.js"); binmode GR; $F=<GR>; $F=~s/(mochaTest: {.\s*options: {)/$1\n        timeout: 20000,/ms; open(NG, ">/home/vagrant/appserver/Gruntfile.js"); print NG $F' && \
     echo "Before grunt test"; \
     su - vagrant -c'cd appserver && grunt test' && \
-    echo "After grunt test"; \
+    echo "After grunt test" && \
     mongo mean-dev --eval "printjson(db.dropDatabase())" && \
     killall mongod && \
     rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
