@@ -29,9 +29,11 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV LANG=C
 ENV LC_ALL=C
 
-RUN apt-get update && \
-    apt-get dist-upgrade -y && \
-    apt-get install -y wget aptitude htop vim vim-puppet git traceroute dnsutils \
+# Dependencies + Vagrant
+RUN \
+    apt-get -yq update && \
+    apt-get dist-upgrade -yq && \
+    apt-get install -yqq wget aptitude htop vim vim-puppet git traceroute dnsutils \
       curl ssh sudo psmisc gcc make build-essential libfreetype6 libfontconfig augeas-tools && \
     mkdir /var/run/sshd && \
     sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config && \
@@ -48,13 +50,17 @@ RUN apt-get update && \
     echo "set modeline" > /etc/vim/vimrc.local && \
     echo "export TERM=vt100\nexport LANG=C\nexport LC_ALL=C" > /etc/profile.d/dockenv.sh && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Mongodb & mean-cli
+RUN \
     echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' > /etc/apt/sources.list.d/mongodb.list && \
-    apt-get update && \
-    apt-get install -y mongodb-org && \
-    /usr/bin/mongod --config /etc/mongod.conf --fork && \
+    apt-get -yq update && \
+    apt-get install -yqq mongodb-org && \
     curl -sL https://deb.nodesource.com/setup | sudo bash - && \
-    apt-get update && \
-    apt-get install -y nodejs && \
+    apt-get -yq update && \
+    apt-get install -yqq nodejs && \
     apt-get clean && \
     npm install -g grunt-cli && \
     npm install -g gulp && \
@@ -62,18 +68,17 @@ RUN apt-get update && \
     npm install -g mocha && \
     npm install -g bower && \
     npm install -g mean-cli && \
-    npm cache clean; \
-    echo "Before mean init"; \
+    npm cache clean && \
+    rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# App init
+RUN \
+    /usr/bin/mongod --config /etc/mongod.conf --fork && \
     su - vagrant -c'echo -e "\n\n \n" | mean init --branch v0.4.2 appserver && cd appserver && npm install && mean install mean-admin && npm cache clean; bower cache clean' && \
-    echo "Before perl edit Gruntfile"; \
     perl -e 'local $/=undef; open(GR,"</home/vagrant/appserver/Gruntfile.js"); binmode GR; $F=<GR>; $F=~s/(mochaTest: {.\s*options: {)/$1\n        timeout: 20000,/ms; open(NG, ">/home/vagrant/appserver/Gruntfile.js"); print NG $F' && \
-    echo "Before grunt test"; \
     su - vagrant -c'cd appserver && grunt test' && \
-    echo "After grunt test" && \
-    mongo mean-dev --eval "printjson(db.dropDatabase())" && \
     killall mongod && \
     rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 CMD ["/usr/sbin/sshd", "-D", "-e"]
-EXPOSE 22
-EXPOSE 3000
+EXPOSE 22 3000
