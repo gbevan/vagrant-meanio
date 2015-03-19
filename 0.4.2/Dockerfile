@@ -34,7 +34,7 @@ RUN \
     apt-get -yq update && \
     apt-get dist-upgrade -yq && \
     apt-get install -yqq wget aptitude htop vim vim-puppet git traceroute dnsutils \
-      curl ssh sudo psmisc gcc make build-essential libfreetype6 libfontconfig augeas-tools && \
+      curl ssh sudo psmisc gcc make build-essential libfreetype6 libfontconfig augeas-tools tree && \
     mkdir /var/run/sshd && \
     sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config && \
     sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config && \
