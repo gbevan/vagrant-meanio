@@ -75,7 +75,9 @@ RUN \
 # App init
 RUN \
     /usr/bin/mongod --config /etc/mongod.conf --fork && \
-    su - vagrant -c'mkdir -p .npm; echo -e "\n\n \n" | mean init --branch v0.4.2 appserver && cd appserver && sed -i "s/\\(mongoose.:.*\\)^3\\.8\\.8\\(.*\\)/\13.8.8 - 3.8.23\2/" package.json && npm install && bower --config.interactive=false install && mean install mean-admin && npm cache clean; bower cache clean' && \
+    echo "export MONGOOSE_DISABLE_STABILITY_WARNING=1" >> ~/.bashrc && \
+    export MONGOOSE_DISABLE_STABILITY_WARNING=1 && \
+    su - vagrant -c'mkdir -p .npm; echo -e "\n\n \n" | mean init --branch v0.4.2 appserver && cd appserver && sed -i "s/\\(mongoose.:.*\\)^3\\.8\\.8\\(.*\\)/\13.8\2/" package.json && npm install && bower --config.interactive=false install && mean install mean-admin && npm cache clean; bower cache clean' && \
     perl -e 'local $/=undef; open(GR,"</home/vagrant/appserver/Gruntfile.js"); binmode GR; $F=<GR>; $F=~s/(mochaTest: {.\s*options: {)/$1\n        timeout: 20000,/ms; open(NG, ">/home/vagrant/appserver/Gruntfile.js"); print NG $F' && \
     su - vagrant -c'cd appserver && grunt test' && \
     killall mongod && sleep 10 && (killall -9 mongod 2>/dev/null || true) && sleep 5 && \
