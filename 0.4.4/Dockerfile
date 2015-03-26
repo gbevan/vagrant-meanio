@@ -63,22 +63,20 @@ RUN \
     apt-get -yq update && \
     apt-get install -yqq nodejs && \
     apt-get clean && \
-    npm install -g grunt-cli && \
     npm install -g gulp && \
     npm install -g karma-cli && \
     npm install -g mocha && \
     npm install -g bower && \
-    npm install -g mean-cli@0.9.21 && \
+    npm install -g mean-cli && \
     npm cache clean && \
     rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # App init
 RUN \
     /usr/bin/mongod --config /etc/mongod.conf --fork && \
-    su - vagrant -c'mkdir -p .npm; echo -e "\n\n \n" | mean init --branch v0.4.2 appserver && cd appserver && sed -i "s/\\(mongoose.:.*\\)^3\\.8\\.8\\(.*\\)/\1>=3.8.8 <3.9.0\2/" package.json && npm install && mean install mean-admin && npm cache clean; bower cache clean' && \
-    perl -e 'local $/=undef; open(GR,"</home/vagrant/appserver/Gruntfile.js"); binmode GR; $F=<GR>; $F=~s/(mochaTest: {.\s*options: {)/$1\n        timeout: 20000,/ms; open(NG, ">/home/vagrant/appserver/Gruntfile.js"); print NG $F' && \
-    su - vagrant -c'cd appserver && grunt test' && \
-    killall mongod; sleep 10; killall -9 mongod 2>/dev/null; sleep 5 && \
+    su - vagrant -c'mkdir -p .npm; echo -e "\n\n \n" | mean init --branch v0.4.4 appserver && cd appserver && npm install && bower --config.interactive=false install && mean install mean-admin && npm cache clean; bower cache clean' && \
+    su - vagrant -c'cd appserver && gulp test'; \
+    killall mongod && \
     rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 CMD ["/usr/sbin/sshd", "-D", "-e"]
