@@ -79,5 +79,9 @@ RUN \
     killall mongod && \
     rm -rf /var/lib/mongodb/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-CMD ["/usr/sbin/sshd", "-D", "-e"]
+ADD start-image.sh /
+
+#CMD ["/usr/sbin/sshd", "-D", "-e"]
+ENTRYPOINT ["/bin/bash", "/start-image.sh"]
+
 EXPOSE 22 3000
