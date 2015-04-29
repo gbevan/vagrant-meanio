@@ -73,7 +73,7 @@ RUN \
 
 # App init
 RUN \
-    /usr/bin/mongod --config /etc/mongod.conf --fork && \
+    /usr/bin/mongod --config /etc/mongod.conf --fork --smallfiles && \
     su - vagrant -c'mkdir -p .npm; echo -e "\n\n \n" | mean init --branch v0.4.4 appserver && cd appserver && npm install && bower --config.interactive=false install && mean install mean-admin && npm cache clean; bower cache clean' && \
     su - vagrant -c'cd appserver && gulp test'; \
     killall mongod && \

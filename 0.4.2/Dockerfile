@@ -74,7 +74,7 @@ RUN \
 
 # App init
 RUN \
-    /usr/bin/mongod --config /etc/mongod.conf --fork && \
+    /usr/bin/mongod --config /etc/mongod.conf --fork --smallfiles && \
     echo "export MONGOOSE_DISABLE_STABILITY_WARNING=1" >> ~/.bashrc && \
     export MONGOOSE_DISABLE_STABILITY_WARNING=1 && \
     su - vagrant -c'mkdir -p .npm; echo -e "\n\n \n" | mean init --branch v0.4.2 appserver && cd appserver && sed -i "s/\\(mongoose.:.*\\)^3\\.8\\.8\\(.*\\)/\13.8\2/" package.json && npm install && bower --config.interactive=false install && mean install mean-admin && npm cache clean; bower cache clean' && \
