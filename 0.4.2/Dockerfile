@@ -50,16 +50,16 @@ RUN \
     chmod 0440 /etc/sudoers.d/vagrant && \
     echo "set modeline" > /etc/vim/vimrc.local && \
     echo "export TERM=vt100\nexport LANG=C\nexport LC_ALL=C" > /etc/profile.d/dockenv.sh && \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Mongodb & mean-cli
 RUN \
-    echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' > /etc/apt/sources.list.d/mongodb.list && \
+    echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.2.list && \
     apt-get -yq update && \
     apt-get install -yqq mongodb-org && \
-    curl -sL https://deb.nodesource.com/setup | sudo bash - && \
+    curl -sL https://deb.nodesource.com/setup_4.x | sudo bash - && \
     apt-get -yq update && \
     apt-get install -yqq nodejs && \
     apt-get clean && \
