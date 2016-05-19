@@ -1,7 +1,7 @@
 VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "meanproj", primary: true do |meanproj|
-    meanproj.vm.provision "shell", inline: '/usr/bin/mongod --repair --config /etc/mongod.conf && /usr/bin/mongod --config /etc/mongod.conf --fork --smallfiles || /bin/true'
+    #meanproj.vm.provision "shell", inline: '/usr/bin/mongod --config /etc/mongod.conf --fork --smallfiles || /bin/true'
     meanproj.vm.synced_folder "src/", "/home/vagrant/appserver/packages/custom"
     meanproj.vm.provider "docker" do |d|
       d.image = "gbevan/vagrant-meanio:devel"
