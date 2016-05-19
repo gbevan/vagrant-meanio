@@ -22,7 +22,7 @@
 #  DOCKER_OPTS="--dns ip_1 --dns ip_2"
 #
 
-FROM ubuntu:latest
+FROM ubuntu:14.04
 MAINTAINER Graham Bevan "graham.bevan@ntlworld.com"
 
 ENV DEBIAN_FRONTEND noninteractive
