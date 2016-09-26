@@ -34,7 +34,7 @@ ADD start-image.sh /
 
 # Dependencies + Vagrant
 RUN \
-    apt-add-repository ppa:git-core/ppa -y \
+    apt-add-repository ppa:git-core/ppa -y && \
     apt-get -yq update && \
     apt-get dist-upgrade -yq && \
     apt-get install -yqq wget aptitude htop vim vim-puppet git traceroute dnsutils \
