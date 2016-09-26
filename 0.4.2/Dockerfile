@@ -34,6 +34,7 @@ ADD start-image.sh /
 
 # Dependencies + Vagrant
 RUN \
+    apt-add-repository ppa:git-core/ppa -y \
     apt-get -yq update && \
     apt-get dist-upgrade -yq && \
     apt-get install -yqq wget aptitude htop vim vim-puppet git traceroute dnsutils \
@@ -73,7 +74,7 @@ RUN \
     /usr/bin/mongod --config /etc/mongod.conf --fork --smallfiles && \
     echo "export MONGOOSE_DISABLE_STABILITY_WARNING=1" >> ~/.bashrc && \
     export MONGOOSE_DISABLE_STABILITY_WARNING=1 && \
-    su - vagrant -c'mkdir -p .npm; echo -e "\n\n \n" | mean init --branch v0.4.2 appserver && cd appserver && sed -i "s/\\(mongoose.:.*\\)^3\\.8\\.8\\(.*\\)/\13.8\2/" package.json && npm install && /fix-bower.sh && bower --config.interactive=false install && mean install mean-admin && npm cache clean; bower cache clean' && \
+    su - vagrant -c'mkdir -p .npm; echo -e "\n\n \n" | mean init --branch v0.4.2 appserver && cd appserver && sed -i "s/\\(mongoose.:.*\\)^3\\.8\\.8\\(.*\\)/\13.8\2/" package.json && npm install && /fix-bower.sh && bower --config.interactive=false install && mkdir -p packages/contrib && git clone --depth 1 https://github.com/gbevan/mean-admin.git packages/contrib/mean-admin && cd packages/contrib/mean-admin && npm install && bower install && cd ~/appserver && npm cache clean; bower cache clean' && \
     perl -e 'local $/=undef; open(GR,"</home/vagrant/appserver/Gruntfile.js"); binmode GR; $F=<GR>; $F=~s/(mochaTest: {.\s*options: {)/$1\n        timeout: 20000,/ms; open(NG, ">/home/vagrant/appserver/Gruntfile.js"); print NG $F' && \
     su - vagrant -c'cd appserver && grunt test' && \
     killall mongod && sleep 10 && (killall -9 mongod 2>/dev/null || true) && sleep 5 && \
